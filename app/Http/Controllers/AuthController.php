@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -30,7 +31,12 @@ class AuthController extends Controller
             'password' => 'required',
             'confirmed_password' => ['required','same:password'],
             'role' => 'required',
-            'telephone' => 'required'
+            'telephone' => 'required',
+            'online' => '',
+            'flag' => '',
+            'employee_id' => ''
+
+
         );
         $data = $request->all();
         $validatedData = Validator::make($data,$validatedData);
@@ -67,11 +73,24 @@ class AuthController extends Controller
 
 //        $accessToken = auth()->user()->createToken('authToken')->accessToken;
         $user = auth()->user();
+        $this->online($user->online);
+        // dd($user->online);
+        // die();
         $user->token = $this->generateToken($user);
-        return response()->json([ 'user' => $user], 200);
-       // return response(['user' => auth()->user(), 'access_token' => $accessToken]);
+       //  return $user->online;
+       return response()->json([ 'user' => $user], 200);
 
     }
+
+    public function online($online){
+        $online = 1;
+        $user = auth()->user();
+        $user->online = $online;
+        $user->save();
+        return response()->json([ 'user' => $user], 200);
+    }
+
+
     public function logout()
     {
         $user = User::findOrFail(Auth::guard('api')->id());
@@ -119,7 +138,10 @@ class AuthController extends Controller
             'email' => 'email|required|unique:users',
             'password' => 'required',
             'role' => 'required',
-            'telephone' => 'required'
+            'telephone' => 'required',
+            'online' => '',
+            'flag' => '',
+            'employee_id' => ''
         ]);
     }
 

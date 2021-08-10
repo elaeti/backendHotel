@@ -28,6 +28,11 @@ class User extends Authenticatable
         'employee_id'
     ];
 
+    public function entreprises()
+    {
+        return $this->belongsTo(Entreprise::class,"entrprise_id");
+    }
+
     /**
      * The attributes that should be hidden for arrays.
      *
